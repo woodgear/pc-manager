@@ -38,3 +38,12 @@ impl FromOptionReferenceString for Option<String> {
 pub fn from_ors<T: FromOptionReferenceString>(o: Option<&String>) -> T {
     FromOptionReferenceString::from_option_reference_string(o)
 }
+
+pub fn wmic(cmd: &str) -> Result<String, String> {
+    use std::process::Command;
+    let output = Command::new("wmic")
+        .args(cmd.split(' '))
+        .output()
+        .map_err(|e| format!("eval wmic err {}", e.to_string()))?;
+    String::from_utf8(output.stdout).map_err(|e| e.to_string())
+}

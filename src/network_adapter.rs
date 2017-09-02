@@ -18,7 +18,6 @@ mod v1 {
         use std::str::FromStr;
 
         let cmd = "path win32_networkadapter get caption,guid,index,name,NetEnabled /format:csv";
-
         let output = Command::new("wmic")
             .args(cmd.split(' '))
             .output()
@@ -66,6 +65,7 @@ mod v1 {
 mod v2 {
     use super::*;
     use util::from_ors;
+    use util::wmic;
 
     impl From<Vec<String>> for NetWorkAdapter {
         fn from(list: Vec<String>) -> Self {
@@ -87,16 +87,11 @@ mod v2 {
             NetWorkAdapter::from(list)
         }
     }
-
+    
+    //get all win32_networkadapter
     pub fn network_adapters() -> Result<Vec<NetWorkAdapter>, String> {
-        use std::process::Command;
         let cmd = "path win32_networkadapter get caption,guid,index,name,NetEnabled /format:csv";
-        let output = Command::new("wmic")
-            .args(cmd.split(' '))
-            .output()
-            .expect("failed to execute wmic");
-        let out_str = String::from_utf8(output.stdout).unwrap();
-        let out: Vec<NetWorkAdapter> = out_str
+        let out: Vec<NetWorkAdapter> = wmic(cmd)?
             .lines()
             .skip(2)
             .map(|line| {
@@ -110,6 +105,16 @@ mod v2 {
             .map(|x| x.unwrap())
             .collect();
         Ok(out)
+    }
+
+    impl NetWorkAdapter {
+        pub fn enable(&self) -> Result<String, String> {
+            wmic(&format!("path win32_networkadapter where index={} call enable",self.index))
+        }
+
+        pub fn disable(&self) -> Result<String, String> {
+            wmic(&format!("path win32_networkadapter where index={} call disable",self.index))
+        }
     }
 }
 
