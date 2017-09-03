@@ -5,3 +5,4 @@ authors = ["cong wu <1875486458@qq.com>"]
 
 [dependencies]
 derive-new = "0.5"
+encoding = "0.2"

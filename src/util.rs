@@ -84,12 +84,34 @@ mod test_convert{
     }
 }
 
+#[cfg(windows)]
 pub fn wmic(cmd: &str) -> Result<String, String> {
     use std::process::Command;
     let output = Command::new("wmic")
         .args(cmd.split(' '))
         .output()
         .map_err(|e| format!("eval wmic err {}", e.to_string()))?;
-    String::from_utf8(output.stdout).map_err(|e| e.to_string())
+    if output.status.code()==Some(0) {
+        to_string(output.stdout).and_then(|x|Ok(x.trim().to_string()))
+    } else {
+        to_string(output.stderr).and_then(|x|Err(x.trim().to_string()))
+    }
 }
 
+fn to_string(bin:Vec<u8>)->Result<String,String>{
+    use encoding::{DecoderTrap,all,EncodingRef};
+    let decodelist=[all::GBK as EncodingRef,all::UTF_8 as EncodingRef];
+    let mut res:Result<String,String>=Err("connot convert this bin".to_string());
+    for decoder in decodelist.into_iter() {
+        res = e2s(decoder.decode(&bin,DecoderTrap::Strict));
+        if res.is_ok() {break}
+    }
+    res
+}
+
+#[cfg(test)]
+#[test]
+fn test_wmic() {
+    let res = wmic("lalala");
+    assert_eq!(res,Err("lalala - 找不到别名。".to_string()));
+}
