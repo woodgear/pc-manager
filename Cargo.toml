@@ -2,7 +2,12 @@
 name = "wmi"
 version = "0.1.0"
 authors = ["cong wu <1875486458@qq.com>"]
+build = "build.rs"
 
 [dependencies]
 derive-new = "0.5"
 encoding = "0.2"
+cpp = "0.3"
+
+[build-dependencies]
+cpp_build = "0.3"

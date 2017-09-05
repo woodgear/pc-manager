@@ -88,6 +88,6 @@ mod tests {
 
     #[test]
     fn terminate_by_name() {
-        Process::terminate_by_name("notepad.exe");
+       let _ = Process::terminate_by_name("notepad.exe");
     }
 }

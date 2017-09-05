@@ -65,6 +65,6 @@ mod tests {
     #[test]
     fn test_network_adapters() {
         let v1_res: Result<Vec<NetWorkAdapter>, String> = v1::network_adapters();
-        let v1_list = v1_res.unwrap();
+        let _ = v1_res.unwrap();
     }
 }
