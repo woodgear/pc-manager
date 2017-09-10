@@ -22,17 +22,19 @@ where
 #[cfg(windows)]
 pub fn wmic(cmd: &str) -> Result<String, String> {
     use c_util;
-    let cmd =format!("wmic {}",cmd);
+    let cmd = format!("wmic {}", cmd);
     c_util::call_cmd_slient(cmd)
 }
 
-pub fn to_string(bin:Vec<u8>)->Result<String,String>{
-    use encoding::{DecoderTrap,all,EncodingRef};
-    let decodelist=[all::GBK as EncodingRef,all::UTF_8 as EncodingRef];
-    let mut res:Result<String,String>=Err("connot convert this bin".to_string());
+pub fn to_string(bin: Vec<u8>) -> Result<String, String> {
+    use encoding::{DecoderTrap, all, EncodingRef};
+    let decodelist = [all::GBK as EncodingRef, all::UTF_8 as EncodingRef];
+    let mut res: Result<String, String> = Err("connot convert this bin".to_string());
     for decoder in decodelist.into_iter() {
-        res = e2s(decoder.decode(&bin,DecoderTrap::Strict));
-        if res.is_ok() {break}
+        res = e2s(decoder.decode(&bin, DecoderTrap::Strict));
+        if res.is_ok() {
+            break;
+        }
     }
     res
 }
@@ -41,5 +43,5 @@ pub fn to_string(bin:Vec<u8>)->Result<String,String>{
 #[test]
 fn test_wmic() {
     let res = wmic("lalala");
-    assert_eq!(res,Ok("lalala - 找不到别名。".to_string()));
+    assert_eq!(res, Ok("lalala - 找不到别名。".to_string()));
 }

@@ -17,4 +17,3 @@ extern crate serde;
 pub mod network_adapter;
 pub mod process;
 mod c_util;
-
