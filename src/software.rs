@@ -1,3 +1,5 @@
+use util;
+
 #[derive(Debug, Clone)]
 enum Type {
     X86,
@@ -107,11 +109,10 @@ impl SoftwareTrait for Software {
         Ok(list)
     }
     fn uninstall(&self) -> Result<bool, String> {
-        use c_util;
         self.uninstall_str
             .clone()
             .ok_or("not found uninstall string".to_owned())
-            .and_then(|cmd| c_util::call_cmd_slient(cmd))
+            .and_then(|cmd| util::call_cmd_slient(cmd))
             .and_then(|_| Ok(true))
     }
 }

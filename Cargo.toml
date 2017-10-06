@@ -1,5 +1,5 @@
 [package]
-name = "wmi"
+name = "pcmanager"
 version = "0.1.0"
 authors = ["cong wu <1875486458@qq.com>"]
 build = "build.rs"
@@ -12,5 +12,6 @@ csv = "1.0.0-beta.4"
 serde = "1"
 serde_derive = "1"
 winreg = "0.4"
+subprocess  = { git = "https://github.com/woodgear/rust-subprocess.git" }
 [build-dependencies]
 cpp_build = "0.3"

@@ -1,17 +1,21 @@
-#[macro_export]
-macro_rules! to_array {
-    ($vec:expr,$len:expr)=>{
-        if $vec.len()<$len {
-            Err(format!("convert vec to array err vec len should more then {}",$len))
-        }else {
-            let mut a=[Default::default();$len];
-            for (index,x) in $vec.into_iter().take($len).enumerate() {
-                a[index]=x;
-            }
-            Ok(a)
-        }
-    }
+
+
+use subprocess::{Exec,Redirection};
+
+pub fn call_cmd_slient(cmd: String) -> Result<String, String> {
+    let out = Exec::shell(cmd)
+        .stdout(Redirection::Pipe)
+        .capture().map_err(|e|e.to_string())?
+        .stdout_str();
+    return Ok(out.trim().to_owned());
 }
+
+#[test]
+fn test_call_cmd_slient() {
+    let out = call_cmd_slient("echo test".to_owned());
+    assert_eq!(out, Ok("test".to_string()));
+}
+
 fn e2s<T, E>(r: Result<T, E>) -> Result<T, String>
 where
     E: ToString,
@@ -21,12 +25,11 @@ where
 
 #[cfg(windows)]
 pub fn wmic(cmd: &str) -> Result<String, String> {
-    use c_util;
     let cmd = format!("wmic {}", cmd);
-    c_util::call_cmd_slient(cmd)
+    call_cmd_slient(cmd)
 }
 
-pub fn to_string(bin: Vec<u8>) -> Result<String, String> {
+fn to_string(bin: Vec<u8>) -> Result<String, String> {
     use encoding::{DecoderTrap, all, EncodingRef};
     let decodelist = [all::GBK as EncodingRef, all::UTF_8 as EncodingRef];
     let mut res: Result<String, String> = Err("connot convert this bin".to_string());
